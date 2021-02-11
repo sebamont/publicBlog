@@ -1,0 +1,243 @@
+{% load static %}
+{% load extra_tags %}
+{% get_category_list as cat_list %}
+{% get_type_list as type_list %}
+{% get_tag_list as tag_list %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>{% block title %}suggestionBlog{{subpage_title}}{% endblock title %}</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+  {% block extracss %} {% endblock extracss %}
+
+
+
+</head>
+
+<body>
+{% block content %}
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'blog:index' %}">suggestionBlog</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Categories
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% for cat in cat_list %}
+                <a class="dropdown-item" href="{% url 'blog:slug-suggestion-list' 'category' cat.slug %}">{{cat.name}}</a>
+              {% endfor %}
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Types
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% for types in type_list %}
+                <a class="dropdown-item" href="{% url 'blog:slug-suggestion-list' 'type' types.slug %}">{{types.name}}</a>
+              {% endfor %}
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Tags
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% for tags in tag_list %}
+                <a class="dropdown-item" href="{% url 'blog:slug-suggestion-list' 'tag' tags.slug %}">{{tags.name}}</a>
+              {% endfor %}
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-user"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% if user.is_authenticated %}
+                <a class="dropdown-item" href="{% url 'blog:edit-profile' user.id %}">Edit Profile</a>
+                <a class="dropdown-item" href="{% url 'blog:my-posts' %}">My Suggestions</a>
+                <a class="dropdown-item" href="{% url 'blog:logout' %}">Log Out</a>
+              {% else %}
+                <a class="dropdown-item" href="{% url 'blog:login' %}">Log In</a>
+                <a class="dropdown-item" href="{% url 'blog:register' %}">Register</a>
+              {% endif %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'blog:contribution-list' %}">Top Contributors</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url({% block page_header_image %}{{ header_image }}{% endblock page_header_image %})">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1>{% block header_title %}Clean Blog {% endblock header_title%}</h1>
+            <span class="subheading">{% block header_subtitle %}
+                <form method="get">
+                  <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                      <input type="text" class="form-control" placeholder="Search" name="search">
+                      <span class="input-group-list">
+                        <button type="submit" class="button btn-success py-1">Search</button>
+                      </span>
+                    </div>
+                  </div>
+                </form>
+              {% endblock header_subtitle%}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <div class="container">
+    <div class="clearfix">
+      {% block new-suggestion-button %}
+       <a class="btn btn-primary float-right col-sm-12 col-lg-4 mb-4" href="{% url 'blog:create-suggestion' %}">New Suggestion</a>
+      {% endblock new-suggestion-button %}
+      {% block edit-suggestion-button %}
+      {% endblock edit-suggestion-button %}
+      {% block random-post-button %}
+       <a class="btn btn-info float-left col-sm-12 col-md-4" href="{% url 'blog:random-post' button_filter button_slug %}">Random Suggestion</a>
+      {% endblock random-post-button %}
+    </div>
+    {% block post_content %}
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+         {% if object_list %}
+            {% for suggestion in object_list %}
+              <div class="post-preview">
+                <a href="{% url 'blog:post-detail' suggestion.slug %}">
+                  <h2 class="post-title">
+                    {{suggestion.title}}
+                  </h2>
+                </a>
+                  <h3 class="post-subtitle">
+                    Type: <a href="{% url 'blog:slug-suggestion-list' 'type' suggestion.type.slug %}">{{suggestion.type}}</a>
+                  </h3>
+                <p class="post-meta">Tags:
+                  {% for tag in suggestion.tag.all %}
+                    <a href="{% url 'blog:slug-suggestion-list' 'tag' tag.slug %}">{{tag}}</a>
+                  {% endfor %}
+              </div>
+              <hr>
+            {% endfor %}  
+              <!-- Pager -->
+          <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+          </div>
+        {% else %}
+          <div class="post-preview mt-4">
+            <h2 class="post-title">
+              No suggestions matches your search and/or no suggestions were made yet!
+            </h2>
+            <h3 class="post-subtitle">
+              Don't hesitate to add your suggestion
+            </h3>
+            <p><a href="{% url 'blog:create-suggestion' %}">Add your suggestion</a></p>
+          </div>
+          <hr>
+        {% endif %}
+       </div>
+      </div>
+    {% endblock post_content %}
+  </div>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; Your Website 2019</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="{% static 'js/clean-blog.min.js' %}"></script>
+
+  {% block extrajs %} {% endblock extrajs %}
+</body>
+{% endblock content %}
+</html>
+
+

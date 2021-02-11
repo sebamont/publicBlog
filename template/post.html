@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %} suggestionBlog | {{object.title}} {% endblock title %}
+{% block page_header_image %}{{object.image}}{% endblock page_header_image %}
+{% block header_title %}{{object.title}}{% endblock header_title %}
+{% block header_subtitle %}
+  Type: <a href="{% url 'blog:slug-suggestion-list' 'type' object.type.slug %}">{{object.type}}</a> | Category: <a href="{% url 'blog:slug-suggestion-list' 'category' object.category.slug %}">{{object.category}}</a> | Tags:
+  {% for tag in object.tag.all %}
+    <a href="{% url 'blog:slug-suggestion-list' 'tag' tag.slug %}">{{tag}}</a> -
+  {% endfor %}
+{% endblock header_subtitle %}
+{% block edit-suggestion-button %}
+  {% if user == object.author %}
+    <a class="btn btn-danger float-right col-sm-12 col-lg-3 mb-4 mr-lg-3" href="{% url 'blog:delete-post' object.slug %}">Delete Suggestion</a>
+    <a class="btn btn-success float-right col-sm-12 col-lg-3 mb-4 mr-lg-3" href="{% url 'blog:edit-post' object.slug %}">Edit Suggestion</a>
+  {% endif %}
+{% endblock edit-suggestion-button %}
+{% block random-post-button %}{% endblock random-post-button %}
+
+{% block post_content %}
+<div class="row mt-3">
+  <div class="col-md-10">
+    <h2>{{object.title}}</h2>
+    <p>{% autoescape off %}{{ object.content | safe }}{% endautoescape %}</p>
+    <hr>
+    <p>Suggested by: <a href="{% url 'blog:author-suggestion-list' object.author.profile.slug %}">{{object.author.profile.alias}}</a> on {{object.creation_date}} || Suggestion Views: {{object.ranking}}</p>
+  </div>
+</div>
+{% endblock post_content %}

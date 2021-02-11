@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block new-suggestion-button %}{% endblock new-suggestion-button %}
+{% block random-post-button %}{% endblock random-post-button %}
+
+{% block post_content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+{% endblock post_content %}
