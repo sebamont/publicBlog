@@ -4,6 +4,7 @@
 
 ### Techs Used:
 * Django
+* PostgreSQL
 * CKeditor
 * Django-import-export
 * Html-CSS-Bootstrap 
